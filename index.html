@@ -29,6 +29,8 @@
     --app-soft:#E4F3EA;
     --app-ink:#155C38;
     --libre-soft:#EDEDE4;
+    --dep-soft:#D9EFF6;
+    --dep-ink:#0B5D75;
     --header:#141B33;
     --shadow:0 1px 2px rgba(20,25,45,.05),0 10px 28px -20px rgba(20,25,45,.28);
     color-scheme:light;
@@ -48,6 +50,8 @@
       --app-soft:#1B2E24;
       --app-ink:#7BD3A4;
       --libre-soft:#20242F;
+      --dep-soft:#12384A;
+      --dep-ink:#6BD0EE;
       --header:#0B0D14;
       --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -20px rgba(0,0,0,.6);
       color-scheme:dark;
@@ -138,6 +142,13 @@
   .tarea.marcada span{text-decoration:line-through;color:var(--ink-soft)}
   .tarea .dur{color:var(--ink-soft);font-size:13px;white-space:nowrap}
   .libre{color:var(--ink-soft);font-size:14px}
+  .tarea .tag{
+    display:inline-block;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    padding:1px 6px;border-radius:6px;margin-left:6px;vertical-align:middle;white-space:nowrap;
+    background:var(--accent-soft);color:var(--accent);
+  }
+  .tarea .tag.dep{background:var(--dep-soft);color:var(--dep-ink)}
+  .tarea.marcada .tag{opacity:.55}
 
   .hito{
     background:var(--milestone-soft);border:2px solid var(--milestone);
@@ -176,6 +187,7 @@
   .cal-dia.c-mock{background:var(--accent);color:#fff}
   .cal-dia.c-hito{background:var(--milestone);color:#fff}
   .cal-dia.c-app{background:var(--app-soft);color:var(--app-ink)}
+  .cal-dia.c-dep{background:var(--dep-soft);color:var(--dep-ink)}
   .cal-dia.c-libre{background:var(--libre-soft)}
   .cal-dia.hoy-cal{box-shadow:0 0 0 2.5px var(--ink)}
   .cal-leyenda{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--ink-soft);margin:2px 0 16px}
@@ -194,6 +206,9 @@
   .chip.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
   .chip.on small{color:var(--ink-soft)}
   .chip:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .chip.tema{border-color:var(--ink-soft)}
+  .chip.tema.dep.on{background:var(--dep-ink);border-color:var(--dep-ink)}
+  .filtros .sep{width:1px;background:var(--line);align-self:stretch;margin:0 4px;flex-shrink:0}
   body.filtrando .dia:not(.match),body.filtrando .hito:not(.match){display:none}
   body.filtrando .semana:not(.tiene-match){display:none}
   body.filtrando .dia.match .tarea:not(.t-match){opacity:.35}
@@ -268,7 +283,8 @@
       <span><i style="background:var(--accent)"></i>Mock / examen de práctica</span>
       <span><i style="background:var(--milestone)"></i>Hito (examen real, envío, deadline)</span>
       <span><i style="background:var(--app-soft)"></i>Ensayos / aplicación</span>
-      <span><i style="background:var(--libre-soft)"></i>Deporte / libre</span>
+      <span><i style="background:var(--dep-soft)"></i>Deporte / Ultra Paine</span>
+      <span><i style="background:var(--libre-soft)"></i>Libre</span>
     </div>
     <div class="cal-grid" id="cal-grid"></div>
   </section>
@@ -323,24 +339,25 @@ const DIAS=["dom","lun","mar","mié","jue","vie","sáb"];
 
 // ---------- Datos del plan ----------
 // tipo: t = tareas, h = hito, l = libre/deporte
+// tarea: [texto, duración, ent?] — el 3er campo fuerza el entregable (ej. "deporte"); si falta, se infiere del texto
 const PLAN=[
  // FASE 1
  {f:"f1",sem:"Semana 1 · 14–20 sept",foco:"Retomar ritmo + logística",dias:[
   ["2026-09-14",[["Volver del viaje: ordenar apuntes de las 3 escuelas mientras están frescos","30 min"]]],
-  ["2026-09-15",[],"Running en cerro"],
-  ["2026-09-16",[["GMAT: Quant cronometrado — rates, ratios y porcentajes (tu brecha #3)","1,5 h"],["Revisar lista de equipo obligatorio Ultra Paine y anotar qué falta comprar","30 min"]]],
-  ["2026-09-17",[["GMAT: drill de soltar — 20 preguntas CR, máx 2,5 min c/u, responder SIEMPRE aunque no estés seguro","1,5 h"],["Agendar fecha GMAT (objetivo sáb 14 nov) y fecha TOEFL/IELTS (objetivo sáb 3 oct)","20 min"]],"¿Nieve AM? (tentativo)"],
-  ["2026-09-18",[],"Libre"],
-  ["2026-09-19",[["Simulacro parcial GMAT (2 secciones seguidas con tiempo real) — adelantado por Ultra Paine","3,5 h"],["Conseguir equipo obligatorio Ultra Paine (compras del fin de semana)","—"]]],
-  ["2026-09-20",[["Revisión de errores del simulacro","1 h"]],null,true]
+  ["2026-09-15",[["Running en cerro","—","deporte"]]],
+  ["2026-09-16",[["GMAT: Quant cronometrado — rates, ratios y porcentajes (tu brecha #3)","1,5 h"],["Revisar lista de equipo obligatorio Ultra Paine y anotar qué falta comprar","30 min","deporte"]]],
+  ["2026-09-17",[["GMAT: drill de soltar — 20 preguntas CR, máx 2,5 min c/u, responder SIEMPRE aunque no estés seguro","1,5 h"],["Agendar fecha GMAT (objetivo sáb 14 nov) y fecha TOEFL/IELTS (objetivo sáb 3 oct)","20 min"],["Descanso. Fiesta moderada, agua entre tragos","—","deporte"]]],
+  ["2026-09-18",[["Rodaje 6 km suave AM, techo FC 150. Fiesta moderada","—","deporte"]]],
+  ["2026-09-19",[["Simulacro parcial GMAT (2 secciones seguidas con tiempo real) — adelantado por Ultra Paine","3,5 h"],["Conseguir equipo obligatorio Ultra Paine (compras del fin de semana)","—","deporte"],["Descanso. Cero alcohol desde hoy hasta el 26","—","deporte"]]],
+  ["2026-09-20",[["Revisión de errores del simulacro","1 h"],["Rodaje 5 km, techo FC 150. Empezar a acostarse 30–45 min antes","—","deporte"]],null,true]
  ]},
  {f:"f1",sem:"Semana 2 · 21–27 sept",foco:"Jefes + Ultra Paine",dias:[
-  ["2026-09-21",[["GMAT: Quant cronometrado — seguir con rates/ratios/porcentajes","1,5 h"],["Agendar conversación con jefe directo (contarle del MBA y pedir carta)","10 min"]]],
-  ["2026-09-22",[["GMAT: sección verbal COMPLETA con reloj — la meta es terminarla, no la precisión","1,5 h"]]],
-  ["2026-09-23",[["Conversación con jefes: plan MBA + pedir las 2 cartas para diciembre","—"],["Armar bolso: equipo obligatorio Ultra Paine completo","30 min"]]],
-  ["2026-09-24",[],"✈️ Viaje a Torres del Paine"],
-  ["2026-09-25",[],"Paine: acreditación, logística de carrera y descanso"],
-  ["2026-09-26",[["🎯 Ultra Paine — día de carrera","—"]]],
+  ["2026-09-21",[["GMAT: Quant cronometrado — seguir con rates/ratios/porcentajes","1,5 h"],["Agendar conversación con jefe directo (contarle del MBA y pedir carta)","10 min"],["Descanso o tren superior liviano (4 ejercicios, sin subir pesos)","—","deporte"]]],
+  ["2026-09-22",[["GMAT: sección verbal COMPLETA con reloj — la meta es terminarla, no la precisión","1,5 h"],["Rodaje 5 km, techo FC 150","—","deporte"]]],
+  ["2026-09-23",[["Conversación con jefes: plan MBA + pedir las 2 cartas para diciembre","—"],["Armar bolso: equipo obligatorio Ultra Paine completo","30 min","deporte"],["Activación: 4 km suaves + 3–4 aceleraciones de 20 seg al final","—","deporte"],["Subir carbohidratos, bajar fibra y grasa hasta el 25","—","deporte"]]],
+  ["2026-09-24",[["✈️ Viaje: vuelo 11 AM a Punta Arenas, auto a Puerto Natales","—","deporte"],["Levantarse cada hora en el avión, parar en el auto. Agua todo el día","—","deporte"],["Caminata suave 15–20 min en la noche","—","deporte"]]],
+  ["2026-09-25",[["Nada de deporte. Retiro de kit","—","deporte"],["Revisar pronóstico y elegir ropa","—","deporte"],["Cena conocida y temprana. Dejar todo listo. Dormir temprano","—","deporte"]]],
+  ["2026-09-26",[["🎯 Ultra Paine 21K — día de carrera","—","deporte"],["Desayuno 60–90 min antes: tostada con miel, plátano, café","—","deporte"],["Calentamiento: 5 min de balanceos","—","deporte"],["Primeros 5 km a ritmo de rodaje, techo FC 155","—","deporte"],["Gel en km 8 y km 14–15. Agua en cada puesto","—","deporte"]]],
   ["2026-09-27",[],"Vuelta a Santiago",true]
  ]},
  {f:"f1",sem:"Semana 3 · 28 sept–4 oct",foco:"TOEFL/IELTS",dias:[
@@ -464,10 +481,20 @@ const PLAN=[
 ];
 
 // ---------- Entregables ----------
+// s = etiqueta corta que se muestra en cada tarea
 const ENTS={
-  gmat:{n:"GMAT"},toefl:{n:"TOEFL/IELTS"},cartas:{n:"Cartas de recomendación"},
-  cv:{n:"CV"},ie:{n:"Aplicación IE"},iese:{n:"Aplicación IESE"},esade:{n:"Aplicación ESADE"}
+  gmat:{n:"GMAT",s:"GMAT"},toefl:{n:"TOEFL/IELTS",s:"TOEFL"},cartas:{n:"Cartas de recomendación",s:"Cartas"},
+  cv:{n:"CV",s:"CV"},ie:{n:"Aplicación IE",s:"IE"},iese:{n:"Aplicación IESE",s:"IESE"},esade:{n:"Aplicación ESADE",s:"ESADE"},
+  deporte:{n:"Deporte",s:"Deporte"},otros:{n:"Otros",s:"MBA"}
 };
+// Temas: agrupan entregables. Todo lo que no es deporte es MBA.
+const TEMAS={mba:{n:"MBA"},deporte:{n:"Deporte"}};
+function coincide(ent,filtro){
+  if(!filtro)return false;
+  if(filtro==="mba")return ent!=="deporte";
+  return ent===filtro;
+}
+function entTarea(t){return t[2]||entDe(t[0])}
 function entDe(txt){
   if(/IESE/.test(txt))return"iese";
   if(/ESADE/.test(txt))return"esade";
@@ -476,7 +503,7 @@ function entDe(txt){
   if(t.includes("toefl")||t.includes("ielts"))return"toefl";
   if(t.includes("carta")||t.includes("recomendador")||t.includes("jefe"))return"cartas";
   if(t.includes("cv"))return"cv";
-  if(t.includes("gmat")||t.includes("mock"))return"gmat";
+  if(/gmat|mock|simulacro|repas|errores|bloque largo|sets? |secci[oó]n|estudio|examen/.test(t))return"gmat";
   return"otros";
 }
 
@@ -530,8 +557,9 @@ PLAN.forEach((bloque,bi)=>{
         const key=`${iso}-${ti}`;
         const checked=store[key]?"checked":"";
         const cls=store[key]?"tarea marcada":"tarea";
-        const ent=entDe(t[0]);
-        html+=`<label class="${cls}" data-ent="${ent}"><input type="checkbox" data-key="${key}" ${checked}><span>${t[0]}${t[1]&&t[1]!=="—"?` <span class="dur">· ${t[1]}</span>`:""}</span></label>`;
+        const ent=entTarea(t);
+        const tag=`<span class="tag${ent==="deporte"?" dep":""}">${ENTS[ent].s}</span>`;
+        html+=`<label class="${cls}" data-ent="${ent}"><input type="checkbox" data-key="${key}" ${checked}><span>${t[0]}${t[1]&&t[1]!=="—"?` <span class="dur">· ${t[1]}</span>`:""}${tag}</span></label>`;
       });
       if(libre)html+=`<span class="libre">${libre}</span>`;
     }
@@ -572,7 +600,7 @@ function clasificar(texto){
   if(t.includes("ensayo")||t.includes("aplicaci")||t.includes("cv")||t.includes("recomendador")||t.includes("video essay")||t.includes("formulario")||t.includes("checklist")||t.includes("feedback")||t.includes("cartas"))return"c-app";
   return"c-gmat";
 }
-const prioridad={"c-hito":4,"c-mock":3,"c-app":2,"c-gmat":1,"c-libre":0};
+const prioridad={"c-hito":5,"c-mock":4,"c-app":3,"c-gmat":2,"c-dep":1,"c-libre":0};
 PLAN.forEach(b=>{
   if(b.tipo==="hito"){catPorFecha[b.fecha]="c-hito";return}
   b.dias.forEach(d=>{
@@ -580,10 +608,10 @@ PLAN.forEach(b=>{
     let cat;
     if(tareas.length===0)cat="c-libre";
     else{
-      cat="c-gmat";
+      cat="c-libre";
       tareas.forEach(t=>{
         if(t[0].includes("🎯")){cat="c-hito";return}
-        const c=clasificar(t[0]);
+        const c=entTarea(t)==="deporte"?"c-dep":clasificar(t[0]);
         if(prioridad[c]>prioridad[cat])cat=c;
       });
     }
@@ -638,7 +666,7 @@ PLAN.forEach(b=>{
   b.dias.forEach(d=>{
     const [iso,tareas]=d;
     tareas.forEach(t=>{
-      const e=entDe(t[0]);
+      const e=entTarea(t);
       if(!inicioEnt[e]||iso<inicioEnt[e])inicioEnt[e]=iso;
     });
   });
@@ -648,8 +676,16 @@ let filtroActivo=null;
 const chipTodo=document.createElement("button");
 chipTodo.className="chip on";chipTodo.innerHTML=`Todo el plan`;
 filtros.appendChild(chipTodo);
+Object.keys(TEMAS).forEach(t=>{
+  const b=document.createElement("button");
+  b.className="chip tema"+(t==="deporte"?" dep":"");b.dataset.ent=t;
+  b.innerHTML=`${TEMAS[t].n}<small>tema</small>`;
+  filtros.appendChild(b);
+});
+const sep=document.createElement("span");sep.className="sep";sep.setAttribute("aria-hidden","true");
+filtros.appendChild(sep);
 Object.keys(ENTS).forEach(e=>{
-  if(!inicioEnt[e])return;
+  if(e==="deporte"||e==="otros"||!inicioEnt[e])return;
   const f=fmtFecha(inicioEnt[e]);
   const b=document.createElement("button");
   b.className="chip";b.dataset.ent=e;
@@ -661,11 +697,11 @@ function aplicarFiltro(ent){
   document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",(c.dataset.ent||null)===ent));
   document.body.classList.toggle("filtrando",!!ent);
   document.querySelectorAll(".dia").forEach(d=>{
-    const match=!!ent&&[...d.querySelectorAll(".tarea")].some(t=>t.dataset.ent===ent);
+    const match=[...d.querySelectorAll(".tarea")].some(t=>coincide(t.dataset.ent,ent));
     d.classList.toggle("match",match);
-    d.querySelectorAll(".tarea").forEach(t=>t.classList.toggle("t-match",t.dataset.ent===ent));
+    d.querySelectorAll(".tarea").forEach(t=>t.classList.toggle("t-match",coincide(t.dataset.ent,ent)));
   });
-  document.querySelectorAll(".hito").forEach(h=>h.classList.toggle("match",!!ent&&h.dataset.ent===ent));
+  document.querySelectorAll(".hito").forEach(h=>h.classList.toggle("match",coincide(h.dataset.ent,ent)));
   document.querySelectorAll(".semana").forEach(s=>s.classList.toggle("tiene-match",!!s.querySelector(".dia.match")));
   document.querySelectorAll(".fase").forEach(fs=>{
     if(fs.id==="vista-cal"){fs.classList.add("tiene-match");return}
@@ -675,7 +711,7 @@ function aplicarFiltro(ent){
   document.querySelectorAll(".cal-dia.activo").forEach(c=>{
     if(!ent){c.style.opacity="";return}
     const el=document.querySelector(`[data-fecha="${c.dataset.ir}"]`);
-    const tiene=el&&(el.classList.contains("match")||(el.classList.contains("hito")&&el.dataset.ent===ent));
+    const tiene=el&&(el.classList.contains("match")||(el.classList.contains("hito")&&coincide(el.dataset.ent,ent)));
     c.style.opacity=tiene?"":".22";
   });
 }
