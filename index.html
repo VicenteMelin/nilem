@@ -93,6 +93,8 @@
     box-shadow:0 6px 20px -6px rgba(43,80,224,.55);
   }
   .btn-hoy:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+  .btn-hoy{transition:opacity .2s,transform .2s}
+  .btn-hoy.oculto{opacity:0;pointer-events:none;transform:translateY(10px)}
 
   main{max-width:840px;margin:0 auto;padding:26px 18px 110px}
 
@@ -102,6 +104,7 @@
   .progress-fill{height:100%;background:var(--accent);border-radius:999px;transition:width .4s ease}
   .progress-marks{position:relative;height:34px;font-size:11px;color:var(--ink-soft)}
   .progress-marks span{position:absolute;transform:translateX(-50%);white-space:nowrap;padding-top:6px;border-left:1px solid var(--line);padding-left:4px}
+  .progress-marks span.fin{transform:translateX(-100%);border-left:none;border-right:1px solid var(--line);padding-left:0;padding-right:4px}
 
   .fase{margin-bottom:42px}
   .fase-head{
@@ -123,6 +126,18 @@
     text-transform:uppercase;letter-spacing:.04em;
   }
   .semana-titulo .foco{color:var(--ink);font-weight:700;text-align:right;text-transform:none;letter-spacing:0;font-size:13px}
+  .semana>summary{list-style:none;cursor:pointer;position:relative;padding-right:26px;-webkit-tap-highlight-color:transparent}
+  .semana>summary::-webkit-details-marker{display:none}
+  .semana>summary::after{
+    content:"";position:absolute;right:6px;top:50%;width:7px;height:7px;
+    border-right:2px solid var(--ink-soft);border-bottom:2px solid var(--ink-soft);
+    transform:translateY(-70%) rotate(45deg);transition:transform .15s;
+  }
+  .semana[open]>summary::after{transform:translateY(-30%) rotate(-135deg)}
+  .semana:not([open])>summary{border-bottom:none;padding-bottom:12px}
+  .semana>summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
+  .semana-titulo .avance{margin-left:8px;font-weight:700;letter-spacing:0;color:var(--ink-soft)}
+  .semana-titulo .avance.completa{color:var(--done)}
 
   .dia{
     display:grid;grid-template-columns:80px 1fr;gap:12px;
@@ -132,6 +147,8 @@
   .dia:last-child{border-bottom:none}
   .dia.hoy{background:var(--accent-soft);border:2px solid var(--accent);border-radius:12px;margin:6px 0;padding:12px 10px}
   .dia.hoy .fecha::after{content:"HOY";display:inline-block;margin-left:6px;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;vertical-align:middle}
+  .dia.proximo{border:2px dashed var(--accent);border-radius:12px;margin:6px 0;padding:12px 10px}
+  .dia.proximo .fecha::after{content:"PRÓXIMO";display:inline-block;margin-left:6px;border:1.5px solid var(--accent);color:var(--accent);font-size:10px;font-weight:700;padding:1px 6px;border-radius:999px;vertical-align:middle}
   .dia.pasado{opacity:.5}
   .fecha{font-weight:700;font-size:13px;padding-top:2px}
   .fecha small{display:block;font-weight:400;color:var(--ink-soft)}
@@ -194,8 +211,13 @@
   .cal-leyenda span{display:flex;align-items:center;gap:5px}
   .cal-leyenda i{width:12px;height:12px;border-radius:4px;display:inline-block}
 
-  /* ---- Filtros por entregable ---- */
-  .filtros{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px}
+  /* ---- Filtros: fila de temas + fila de entregables ---- */
+  .filtros{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+  .filtros-fila{display:flex;flex-wrap:wrap;gap:8px}
+  .chip.ent{font-size:12.5px;padding:6px 12px}
+  .filtro-estado{font-size:13px;color:var(--ink-soft);margin-bottom:26px;min-height:1.4em}
+  .filtro-estado button{font:inherit;font-weight:700;background:none;border:none;padding:0;color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+  .filtro-estado button:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
   .chip{
     font:inherit;font-size:13px;font-weight:600;
     background:var(--card);border:1.5px solid var(--line);color:var(--ink);
@@ -208,7 +230,6 @@
   .chip:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
   .chip.tema{border-color:var(--ink-soft)}
   .chip.tema.dep.on{background:var(--dep-ink);border-color:var(--dep-ink)}
-  .filtros .sep{width:1px;background:var(--line);align-self:stretch;margin:0 4px;flex-shrink:0}
   body.filtrando .dia:not(.match),body.filtrando .hito:not(.match){display:none}
   body.filtrando .semana:not(.tiene-match){display:none}
   body.filtrando .dia.match .tarea:not(.t-match){opacity:.35}
@@ -233,15 +254,12 @@
       margin-left:-12px;margin-right:-12px;padding:2px 12px 10px;
     }
     .cal-mes{min-width:252px;scroll-snap-align:start}
-    .filtros{
-      flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
-      margin-left:-12px;margin-right:-12px;padding:0 12px 6px;
-    }
-    .chip{white-space:nowrap;flex-shrink:0}
+    .chip{white-space:nowrap}
+    .chip.ent small{display:none}
   }
   @media (prefers-reduced-motion:reduce){
     html{scroll-behavior:auto}
-    .progress-fill{transition:none}
+    .progress-fill,.btn-hoy,.semana>summary::after{transition:none}
   }
 </style>
 </head>
@@ -250,9 +268,9 @@
 <header>
   <h1>Plan 2027 · Vicente</h1>
   <div class="countdowns">
-    <div><b id="cd-paine">–</b>días a Ultra Paine</div>
-    <div><b id="cd-gmat">–</b>días al GMAT</div>
-    <div><b id="cd-iese">–</b>días a R2 IESE</div>
+    <div id="cd-paine"><b>–</b>días a Ultra Paine</div>
+    <div id="cd-gmat"><b>–</b>días al GMAT</div>
+    <div id="cd-iese"><b>–</b>días a R2 IESE</div>
   </div>
 </header>
 <button class="btn-hoy" onclick="irAHoy()">Ir a hoy</button>
@@ -265,12 +283,13 @@
     <div class="progress-marks">
       <span style="left:15%">TOEFL</span>
       <span style="left:53%">GMAT</span>
-      <span style="left:80%">App IE</span>
-      <span style="left:99%">R2 IESE</span>
+      <span class="fin" style="left:82%">App IE</span>
+      <span class="fin" style="left:100%">R2 IESE</span>
     </div>
   </div>
 
-  <div class="filtros" id="filtros" role="group" aria-label="Filtrar por entregable"></div>
+  <div class="filtros" id="filtros" role="group" aria-label="Filtrar el plan"></div>
+  <p class="filtro-estado" id="filtro-estado" aria-live="polite"></p>
 
   <!-- ============ VISTA CALENDARIO ============ -->
   <section class="fase" id="vista-cal">
@@ -512,14 +531,15 @@ function fmtFecha(iso){
   const d=new Date(iso+"T12:00:00");
   return {dia:DIAS[d.getDay()],num:d.getDate()+" "+MESES[d.getMonth()]};
 }
-function esHoy(iso){
-  const h=new Date(); const d=new Date(iso+"T12:00:00");
-  return h.getFullYear()===d.getFullYear()&&h.getMonth()===d.getMonth()&&h.getDate()===d.getDate();
-}
-function esPasado(iso){
-  const h=new Date(); h.setHours(0,0,0,0);
-  return new Date(iso+"T12:00:00")<h && !esHoy(iso);
-}
+// "Hoy" sale del reloj, salvo que la URL traiga ?hoy=YYYY-MM-DD (solo para probar cómo se verá otro día)
+const HOY=(()=>{
+  const q=new URLSearchParams(location.search).get("hoy");
+  return /^\d{4}-\d{2}-\d{2}$/.test(q||"")?new Date(q+"T12:00:00"):new Date();
+})();
+function ahora(){return new Date(HOY)}
+const hoyISO=`${HOY.getFullYear()}-${String(HOY.getMonth()+1).padStart(2,"0")}-${String(HOY.getDate()).padStart(2,"0")}`;
+function esHoy(iso){return iso===hoyISO}
+function esPasado(iso){return iso<hoyISO}
 let store={};
 try{store=JSON.parse(localStorage.getItem("planMBA")||"{}")}catch(e){store={}}
 function guardar(){try{localStorage.setItem("planMBA",JSON.stringify(store))}catch(e){}}
@@ -538,9 +558,13 @@ PLAN.forEach((bloque,bi)=>{
     cont.appendChild(div);
     return;
   }
-  const sem=document.createElement("div");
+  const sem=document.createElement("details");
   sem.className="semana";
-  sem.innerHTML=`<div class="semana-titulo"><span>${bloque.sem}</span><span class="foco">${bloque.foco}</span></div>`;
+  // semana terminada (su último día ya pasó) → colapsada; el título con el avance queda visible
+  const terminada=bloque.dias[bloque.dias.length-1][0]<hoyISO;
+  sem.open=!terminada;
+  if(terminada)sem.classList.add("terminada");
+  sem.innerHTML=`<summary class="semana-titulo"><span>${bloque.sem}<b class="avance"></b></span><span class="foco">${bloque.foco}</span></summary>`;
   bloque.dias.forEach((dia,di)=>{
     const [iso,tareas,libre]=dia;
     const f=fmtFecha(iso);
@@ -577,19 +601,39 @@ document.addEventListener("change",e=>{
     if(!e.target.checked)delete store[key];
     e.target.closest(".tarea").classList.toggle("marcada",e.target.checked);
     guardar();
+    actualizarAvance();
   }
 });
+function actualizarAvance(){
+  document.querySelectorAll(".semana").forEach(s=>{
+    const cajas=s.querySelectorAll("input[type=checkbox]");
+    const listas=[...cajas].filter(c=>c.checked).length;
+    const av=s.querySelector(".avance");
+    if(!cajas.length){av.textContent="";return}
+    av.textContent=`${listas}/${cajas.length}`;
+    av.classList.toggle("completa",listas===cajas.length);
+  });
+}
+actualizarAvance();
 
 // Countdowns + barra
 function dias(hasta){
-  const h=new Date();h.setHours(0,0,0,0);
-  return Math.max(0,Math.round((new Date(hasta+"T12:00:00")-h)/864e5));
+  const h=ahora();h.setHours(0,0,0,0);
+  return Math.round((new Date(hasta+"T00:00:00")-h)/864e5); // medianoche vs medianoche: días enteros
 }
-document.getElementById("cd-paine").textContent=dias("2026-09-26");
-document.getElementById("cd-gmat").textContent=dias("2026-11-14");
-document.getElementById("cd-iese").textContent=dias("2027-01-07");
+// n>0: "N días a X" · n=0: "Hoy · X" · n<0: "✓ X"
+function cuenta(id,fecha,nombre){
+  const n=dias(fecha);
+  const el=document.getElementById(id);
+  if(n>0)el.innerHTML=`<b>${n}</b>${n===1?"día":"días"} ${nombre.startsWith("al")?nombre:"a "+nombre}`;
+  else if(n===0)el.innerHTML=`<b>Hoy</b>${nombre.replace(/^al /,"")}`;
+  else el.innerHTML=`<b>✓</b>${nombre.replace(/^al /,"")}`;
+}
+cuenta("cd-paine","2026-09-26","Ultra Paine");
+cuenta("cd-gmat","2026-11-14","al GMAT");
+cuenta("cd-iese","2027-01-07","R2 IESE");
 const inicio=new Date("2026-09-14T12:00:00"),fin=new Date("2027-01-07T12:00:00");
-const pct=Math.min(100,Math.max(0,(new Date()-inicio)/(fin-inicio)*100));
+const pct=Math.min(100,Math.max(0,(ahora()-inicio)/(fin-inicio)*100));
 document.getElementById("barra").style.width=pct+"%";
 
 // ---------- Vista calendario ----------
@@ -649,6 +693,8 @@ calGrid.addEventListener("click",e=>{
   if(!btn)return;
   const el=document.querySelector(`[data-fecha="${btn.dataset.ir}"]`);
   if(el){
+    if(filtroActivo&&!el.offsetParent)aplicarFiltro(null); // el día está oculto por el filtro
+    const sem=el.closest("details");if(sem)sem.open=true; // o dentro de una semana colapsada
     el.scrollIntoView({behavior:"smooth",block:"center"});
     el.style.outline="3px solid var(--accent)";
     setTimeout(()=>{el.style.outline=""},1600);
@@ -672,29 +718,36 @@ PLAN.forEach(b=>{
   });
 });
 const filtros=document.getElementById("filtros");
+const filtroEstado=document.getElementById("filtro-estado");
 let filtroActivo=null;
+const filaTemas=document.createElement("div");filaTemas.className="filtros-fila";
+const filaEnts=document.createElement("div");filaEnts.className="filtros-fila";
+filtros.append(filaTemas,filaEnts);
 const chipTodo=document.createElement("button");
-chipTodo.className="chip on";chipTodo.innerHTML=`Todo el plan`;
-filtros.appendChild(chipTodo);
+chipTodo.className="chip tema on";chipTodo.textContent="Todo el plan";chipTodo.setAttribute("aria-pressed","true");
+filaTemas.appendChild(chipTodo);
 Object.keys(TEMAS).forEach(t=>{
   const b=document.createElement("button");
   b.className="chip tema"+(t==="deporte"?" dep":"");b.dataset.ent=t;
-  b.innerHTML=`${TEMAS[t].n}<small>tema</small>`;
-  filtros.appendChild(b);
+  b.textContent=TEMAS[t].n;b.setAttribute("aria-pressed","false");
+  filaTemas.appendChild(b);
 });
-const sep=document.createElement("span");sep.className="sep";sep.setAttribute("aria-hidden","true");
-filtros.appendChild(sep);
 Object.keys(ENTS).forEach(e=>{
   if(e==="deporte"||e==="otros"||!inicioEnt[e])return;
   const f=fmtFecha(inicioEnt[e]);
   const b=document.createElement("button");
-  b.className="chip";b.dataset.ent=e;
+  b.className="chip ent";b.dataset.ent=e;b.setAttribute("aria-pressed","false");
   b.innerHTML=`${ENTS[e].n}<small>parte el ${f.num}</small>`;
-  filtros.appendChild(b);
+  filaEnts.appendChild(b);
 });
+function nombreFiltro(ent){return (TEMAS[ent]||ENTS[ent]).n}
 function aplicarFiltro(ent){
   filtroActivo=ent;
-  document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",(c.dataset.ent||null)===ent));
+  try{ent?localStorage.setItem("planMBA-filtro",ent):localStorage.removeItem("planMBA-filtro")}catch(e){}
+  document.querySelectorAll(".chip").forEach(c=>{
+    const on=(c.dataset.ent||null)===ent;
+    c.classList.toggle("on",on);c.setAttribute("aria-pressed",String(on));
+  });
   document.body.classList.toggle("filtrando",!!ent);
   document.querySelectorAll(".dia").forEach(d=>{
     const match=[...d.querySelectorAll(".tarea")].some(t=>coincide(t.dataset.ent,ent));
@@ -702,7 +755,11 @@ function aplicarFiltro(ent){
     d.querySelectorAll(".tarea").forEach(t=>t.classList.toggle("t-match",coincide(t.dataset.ent,ent)));
   });
   document.querySelectorAll(".hito").forEach(h=>h.classList.toggle("match",coincide(h.dataset.ent,ent)));
-  document.querySelectorAll(".semana").forEach(s=>s.classList.toggle("tiene-match",!!s.querySelector(".dia.match")));
+  document.querySelectorAll(".semana").forEach(s=>{
+    const tiene=!!s.querySelector(".dia.match");
+    s.classList.toggle("tiene-match",tiene);
+    s.open=ent?tiene:!s.classList.contains("terminada");
+  });
   document.querySelectorAll(".fase").forEach(fs=>{
     if(fs.id==="vista-cal"){fs.classList.add("tiene-match");return}
     fs.classList.toggle("tiene-match",!!fs.querySelector(".dia.match,.hito.match"));
@@ -714,6 +771,12 @@ function aplicarFiltro(ent){
     const tiene=el&&(el.classList.contains("match")||(el.classList.contains("hito")&&coincide(el.dataset.ent,ent)));
     c.style.opacity=tiene?"":".22";
   });
+  // línea de estado bajo los chips
+  if(ent){
+    const n=document.querySelectorAll(".dia.match, .hito.match").length;
+    filtroEstado.innerHTML=`${n} ${n===1?"día":"días"} de ${nombreFiltro(ent)} · <button type="button" id="quitar-filtro">Ver todo el plan</button>`;
+  }else filtroEstado.textContent="";
+  actualizarBotonHoy();
 }
 filtros.addEventListener("click",e=>{
   const chip=e.target.closest(".chip");
@@ -721,13 +784,48 @@ filtros.addEventListener("click",e=>{
   const ent=chip.dataset.ent||null;
   aplicarFiltro(ent===filtroActivo?null:ent);
 });
+filtroEstado.addEventListener("click",e=>{
+  if(e.target.closest("#quitar-filtro"))aplicarFiltro(null);
+});
+// recordar el último filtro
+try{
+  const guardado=localStorage.getItem("planMBA-filtro");
+  if(guardado&&(TEMAS[guardado]||ENTS[guardado]))aplicarFiltro(guardado);
+}catch(e){}
 
-function irAHoy(){
-  const el=document.querySelector(".hoy");
-  if(el)el.scrollIntoView({behavior:"smooth",block:"center"});
-  else window.scrollTo({top:0,behavior:"smooth"});
+// Si hoy no tiene entrada en el plan, se marca el próximo día que sí tenga
+if(!document.querySelector(".dia.hoy, .hito.hoy")){
+  const prox=[...document.querySelectorAll(".dia[data-fecha], .hito[data-fecha]")].find(el=>el.dataset.fecha>hoyISO);
+  if(prox)prox.classList.add("proximo");
 }
-window.addEventListener("load",()=>{setTimeout(irAHoy,300)});
+function objetivoHoy(){
+  const visibles=[...document.querySelectorAll(".dia.hoy, .hito.hoy, .dia.proximo, .hito.proximo")].filter(el=>el.offsetParent);
+  return visibles[0]||null;
+}
+// suave cuando lo pide el usuario (botón); instantáneo al cargar, para no animar nada que nadie pidió
+function irAHoy(suave=true){
+  const el=objetivoHoy();
+  const behavior=suave?"smooth":"instant";
+  if(el)el.scrollIntoView({behavior,block:"center"});
+  else window.scrollTo({top:0,behavior});
+}
+const btnHoy=document.querySelector(".btn-hoy");
+let obsHoy=null;
+function actualizarBotonHoy(){
+  if(obsHoy)obsHoy.disconnect();
+  btnHoy.classList.remove("oculto");
+  const el=objetivoHoy();
+  if(!el||!("IntersectionObserver" in window))return;
+  obsHoy=new IntersectionObserver(([en])=>btnHoy.classList.toggle("oculto",en.isIntersecting),{rootMargin:"-110px 0px -20px 0px",threshold:.4});
+  obsHoy.observe(el);
+}
+actualizarBotonHoy();
+// Ir a hoy apenas hay DOM (sin esperar fuentes); al terminar de cargar se reajusta
+// por si el texto se movió, salvo que ya hayas empezado a scrollear.
+let scrolleoManual=false;
+["wheel","touchstart","keydown"].forEach(ev=>window.addEventListener(ev,()=>{scrolleoManual=true},{once:true,passive:true}));
+irAHoy(false);
+window.addEventListener("load",()=>{if(!scrolleoManual)setTimeout(()=>irAHoy(false),250)},{once:true});
 // PWA: service worker para abrir offline desde la pantalla de inicio
 if("serviceWorker" in navigator){
   navigator.serviceWorker.register("sw.js").catch(()=>{});

@@ -17,6 +17,8 @@ Sitio: https://vicentemelin.github.io/nilem/ — despliega **automáticamente** 
   - Sin `ent`, `entDe(texto)` infiere: IESE / ESADE / IE / toefl / cartas / cv / gmat / otros. Revisá el resultado si el texto es ambiguo.
 - Filtros: chips de tema (MBA = todo lo que no es deporte, Deporte) + chips por entregable. Se generan solos desde `ENTS`/`TEMAS`; no hay nada que agregar al HTML.
 - Calendario: color por día según prioridad `hito > mock > app > gmat > deporte > libre`.
+- Semanas: son `<details>`; las terminadas (último día < hoy) arrancan colapsadas mostrando solo título + avance `hechas/total`.
+- Para ver la página como si fuera otro día: `index.html?hoy=2026-12-23`. Solo para probar; no compartir ese link.
 
 ## Flujo de trabajo
 1. Editar → verificar localmente (`python3 -m http.server`) → **mostrar el diff a Vicente y esperar aprobación** → commit → push a `main`.
