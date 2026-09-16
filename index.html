@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#141B33">
+<title>Plan 2027 · Vicente</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75,500;75,700;75,800;100,400;100,500;100,600;100,800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F5F0;
+    --card:#FFFFFF;
+    --ink:#1A2238;
+    --ink-soft:#68718C;
+    --line:#E4E3D9;
+    --accent:#2B50E0;
+    --accent-soft:#E9EEFC;
+    --done:#1F8A55;
+    --milestone:#B4451F;
+    --milestone-soft:#F9EAE2;
+    --app-soft:#E4F3EA;
+    --app-ink:#155C38;
+    --libre-soft:#EDEDE4;
+    --header:#141B33;
+    --shadow:0 1px 2px rgba(20,25,45,.05),0 10px 28px -20px rgba(20,25,45,.28);
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#101219;
+      --card:#191D29;
+      --ink:#E9EBF3;
+      --ink-soft:#98A1B8;
+      --line:#2B3040;
+      --accent:#7590FF;
+      --accent-soft:#222B4A;
+      --done:#4CC38A;
+      --milestone:#FF9166;
+      --milestone-soft:#342219;
+      --app-soft:#1B2E24;
+      --app-ink:#7BD3A4;
+      --libre-soft:#20242F;
+      --header:#0B0D14;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -20px rgba(0,0,0,.6);
+      color-scheme:dark;
+    }
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Archivo',system-ui,sans-serif;
+    font-size:15px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  header{
+    position:sticky;top:0;z-index:10;
+    background:var(--header);color:#fff;
+    padding:12px 20px;
+    padding-top:calc(12px + env(safe-area-inset-top,0px));
+    display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+  header h1{
+    font-stretch:75%;font-weight:800;font-size:19px;letter-spacing:.02em;
+  }
+  header .countdowns{display:flex;gap:8px;font-size:12px}
+  header .countdowns>div{
+    background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);
+    border-radius:10px;padding:5px 12px;line-height:1.15;color:#C6CCE0;
+  }
+  header .countdowns b{font-size:16px;display:block;color:#fff}
+
+  .btn-hoy{
+    position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;
+    background:var(--accent);color:#fff;border:none;cursor:pointer;
+    font:inherit;font-weight:700;font-size:14px;
+    padding:12px 20px;border-radius:999px;
+    box-shadow:0 6px 20px -6px rgba(43,80,224,.55);
+  }
+  .btn-hoy:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+
+  main{max-width:840px;margin:0 auto;padding:26px 18px 110px}
+
+  .progress-wrap{margin-bottom:30px}
+  .progress-label{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-soft);margin-bottom:6px}
+  .progress-track{height:10px;background:var(--line);border-radius:999px;overflow:hidden;position:relative}
+  .progress-fill{height:100%;background:var(--accent);border-radius:999px;transition:width .4s ease}
+  .progress-marks{position:relative;height:34px;font-size:11px;color:var(--ink-soft)}
+  .progress-marks span{position:absolute;transform:translateX(-50%);white-space:nowrap;padding-top:6px;border-left:1px solid var(--line);padding-left:4px}
+
+  .fase{margin-bottom:42px}
+  .fase-head{
+    border-left:6px solid var(--accent);
+    padding:6px 0 6px 14px;margin-bottom:4px;
+  }
+  .fase-head h2{font-stretch:75%;font-weight:800;font-size:21px;line-height:1.25}
+  .fase-head p{color:var(--ink-soft);font-size:14px;max-width:64ch;margin-top:4px}
+
+  .semana{
+    margin-top:18px;
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:4px 14px 6px;box-shadow:var(--shadow);
+  }
+  .semana-titulo{
+    font-weight:600;font-size:12.5px;color:var(--ink-soft);
+    padding:12px 2px 8px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+    border-bottom:1px solid var(--line);
+    text-transform:uppercase;letter-spacing:.04em;
+  }
+  .semana-titulo .foco{color:var(--ink);font-weight:700;text-align:right;text-transform:none;letter-spacing:0;font-size:13px}
+
+  .dia{
+    display:grid;grid-template-columns:80px 1fr;gap:12px;
+    padding:12px 4px;border-bottom:1px solid var(--line);
+    align-items:start;background:transparent;border-radius:10px;
+  }
+  .dia:last-child{border-bottom:none}
+  .dia.hoy{background:var(--accent-soft);border:2px solid var(--accent);border-radius:12px;margin:6px 0;padding:12px 10px}
+  .dia.hoy .fecha::after{content:"HOY";display:inline-block;margin-left:6px;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;vertical-align:middle}
+  .dia.pasado{opacity:.5}
+  .fecha{font-weight:700;font-size:13px;padding-top:2px}
+  .fecha small{display:block;font-weight:400;color:var(--ink-soft)}
+  .tareas{display:flex;flex-direction:column;gap:8px}
+  .tarea{display:flex;gap:10px;align-items:flex-start;cursor:pointer;padding:2px 0}
+  .tarea input{margin-top:3px;width:19px;height:19px;accent-color:var(--done);cursor:pointer;flex-shrink:0}
+  .tarea input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .tarea.marcada span{text-decoration:line-through;color:var(--ink-soft)}
+  .tarea .dur{color:var(--ink-soft);font-size:13px;white-space:nowrap}
+  .libre{color:var(--ink-soft);font-size:14px}
+
+  .hito{
+    background:var(--milestone-soft);border:2px solid var(--milestone);
+    border-radius:14px;margin:16px 0;padding:14px 16px;
+    display:grid;grid-template-columns:80px 1fr;gap:12px;
+    box-shadow:var(--shadow);
+  }
+  .hito .fecha{color:var(--milestone)}
+  .hito-nombre{font-weight:800;font-size:16px;color:var(--milestone)}
+  .hito p{font-size:14px;margin-top:2px}
+
+  .nota{
+    background:var(--card);border:1px dashed var(--line);border-radius:14px;
+    padding:14px 16px;margin-top:14px;font-size:13.5px;color:var(--ink-soft);
+  }
+  .nota b{color:var(--ink)}
+
+  footer{max-width:840px;margin:0 auto;padding:0 18px 60px;color:var(--ink-soft);font-size:13px}
+
+  /* ---- Vista calendario ---- */
+  .cal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:16px;margin-bottom:36px}
+  .cal-mes{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:var(--shadow)}
+  .cal-mes h3{font-stretch:75%;font-weight:800;font-size:15px;margin-bottom:8px}
+  .cal-tabla{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+  .cal-dow{font-size:10px;color:var(--ink-soft);text-align:center;padding-bottom:2px}
+  .cal-dia{
+    aspect-ratio:1;border-radius:7px;font-size:11px;font-weight:600;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--paper);color:var(--ink-soft);
+    border:none;cursor:default;font-family:inherit;padding:0;
+  }
+  .cal-dia.activo{cursor:pointer;color:var(--ink)}
+  .cal-dia.activo:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+  .cal-dia.vacio{background:transparent}
+  .cal-dia.c-gmat{background:var(--accent-soft)}
+  .cal-dia.c-mock{background:var(--accent);color:#fff}
+  .cal-dia.c-hito{background:var(--milestone);color:#fff}
+  .cal-dia.c-app{background:var(--app-soft);color:var(--app-ink)}
+  .cal-dia.c-libre{background:var(--libre-soft)}
+  .cal-dia.hoy-cal{box-shadow:0 0 0 2.5px var(--ink)}
+  .cal-leyenda{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--ink-soft);margin:2px 0 16px}
+  .cal-leyenda span{display:flex;align-items:center;gap:5px}
+  .cal-leyenda i{width:12px;height:12px;border-radius:4px;display:inline-block}
+
+  /* ---- Filtros por entregable ---- */
+  .filtros{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px}
+  .chip{
+    font:inherit;font-size:13px;font-weight:600;
+    background:var(--card);border:1.5px solid var(--line);color:var(--ink);
+    border-radius:12px;padding:8px 14px;cursor:pointer;
+    display:flex;flex-direction:column;align-items:flex-start;line-height:1.25;
+  }
+  .chip small{font-weight:400;color:var(--ink-soft);font-size:11px}
+  .chip.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+  .chip.on small{color:var(--ink-soft)}
+  .chip:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  body.filtrando .dia:not(.match),body.filtrando .hito:not(.match){display:none}
+  body.filtrando .semana:not(.tiene-match){display:none}
+  body.filtrando .dia.match .tarea:not(.t-match){opacity:.35}
+  body.filtrando .fase:not(.tiene-match){display:none}
+
+  @media (max-width:600px){
+    body{font-size:15px}
+    header{padding-left:16px;padding-right:16px}
+    header h1{font-size:17px}
+    header .countdowns{width:100%;justify-content:flex-start}
+    main{padding:20px 12px 120px}
+    .fase-head h2{font-size:18px}
+    .semana{padding:2px 12px 4px}
+    .semana-titulo{flex-direction:column;gap:2px;align-items:flex-start}
+    .semana-titulo .foco{text-align:left}
+    .dia,.hito{grid-template-columns:1fr;gap:6px}
+    .fecha{font-size:13px}
+    .fecha small{display:inline;margin-left:6px}
+    .cal-grid{
+      display:flex;overflow-x:auto;gap:12px;
+      scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+      margin-left:-12px;margin-right:-12px;padding:2px 12px 10px;
+    }
+    .cal-mes{min-width:252px;scroll-snap-align:start}
+    .filtros{
+      flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
+      margin-left:-12px;margin-right:-12px;padding:0 12px 6px;
+    }
+    .chip{white-space:nowrap;flex-shrink:0}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .progress-fill{transition:none}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Plan 2027 · Vicente</h1>
+  <div class="countdowns">
+    <div><b id="cd-paine">–</b>días a Ultra Paine</div>
+    <div><b id="cd-gmat">–</b>días al GMAT</div>
+    <div><b id="cd-iese">–</b>días a R2 IESE</div>
+  </div>
+</header>
+<button class="btn-hoy" onclick="irAHoy()">Ir a hoy</button>
+
+<main>
+
+  <div class="progress-wrap">
+    <div class="progress-label"><span>14 sept 2026</span><span>7 ene 2027</span></div>
+    <div class="progress-track"><div class="progress-fill" id="barra"></div></div>
+    <div class="progress-marks">
+      <span style="left:15%">TOEFL</span>
+      <span style="left:53%">GMAT</span>
+      <span style="left:80%">App IE</span>
+      <span style="left:99%">R2 IESE</span>
+    </div>
+  </div>
+
+  <div class="filtros" id="filtros" role="group" aria-label="Filtrar por entregable"></div>
+
+  <!-- ============ VISTA CALENDARIO ============ -->
+  <section class="fase" id="vista-cal">
+    <div class="fase-head">
+      <h2>Vista de calendario</h2>
+      <p>Toca cualquier día para saltar a su detalle en el plan.</p>
+    </div>
+    <div class="cal-leyenda">
+      <span><i style="background:var(--accent-soft)"></i>Estudio GMAT / TOEFL</span>
+      <span><i style="background:var(--accent)"></i>Mock / examen de práctica</span>
+      <span><i style="background:var(--milestone)"></i>Hito (examen real, envío, deadline)</span>
+      <span><i style="background:var(--app-soft)"></i>Ensayos / aplicación</span>
+      <span><i style="background:var(--libre-soft)"></i>Deporte / libre</span>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+  </section>
+
+  <!-- ============ FASE 1 ============ -->
+  <section class="fase" id="fase1">
+    <div class="fase-head">
+      <h2>Fase 1 · Base y velocidad — 14 sept a 11 oct</h2>
+      <p>Tu mock: 555, con ~80% de precisión en verbal pero sin alcanzar a terminar. El problema es tiempo, no contenido — por eso casi todo es práctica cronometrada, no teoría. Prioridades: (1) soltar cada pregunta a los 2,5–3 min con tu mejor respuesta, (2) velocidad en Critical Reasoning, (3) quant: rates, ratios y porcentajes. Además: conversación con jefes, agendar exámenes y Ultra Paine el 26.</p>
+    </div>
+    <div id="semanas-f1"></div>
+    <div class="nota"><b>Ritmo semanal base:</b> lun / mar / jue → 1,5–2 h de práctica cronometrada. Mié + un día más → deporte (tú eliges cuáles y lo fijamos). Sáb → bloque largo. Dom → repaso de errores o descanso.</div>
+  </section>
+
+  <!-- ============ FASE 2 ============ -->
+  <section class="fase" id="fase2">
+    <div class="fase-head">
+      <h2>Fase 2 · Mocks y afinamiento — 12 oct a 14 nov</h2>
+      <p>Mock oficial cada 2 semanas en condiciones reales. Entre mocks: atacar solo lo que el mock mostró débil. En paralelo, arrancan los ensayos en segundo plano.</p>
+    </div>
+    <div id="semanas-f2"></div>
+  </section>
+
+  <!-- ============ FASE 3 ============ -->
+  <section class="fase" id="fase3">
+    <div class="fase-head">
+      <h2>Fase 3 · Aplicaciones — 15 nov a 20 dic</h2>
+      <p>Con GMAT listo, todo el tiempo va a ensayos, CV final y cartas. IE se envía temprano por beca (rolling). Los recomendadores necesitan 3–4 semanas: brief inmediato post-GMAT.</p>
+    </div>
+    <div id="semanas-f3"></div>
+  </section>
+
+  <!-- ============ FASE 4 ============ -->
+  <section class="fase" id="fase4">
+    <div class="fase-head">
+      <h2>Fase 4 · Cierre R2 — 21 dic a 9 ene</h2>
+      <p>Pulir y enviar IESE y ESADE. Semana de fiestas con carga liviana a propósito: solo revisiones finales, nada nuevo.</p>
+    </div>
+    <div id="semanas-f4"></div>
+    <div class="nota"><b>Después del envío:</b> preparación de entrevistas y video essays (IESE hace assessment day). Eso lo calendarizamos cuando lleguen las invitaciones.</div>
+  </section>
+
+</main>
+
+<footer>
+  Los checks se guardan en este navegador. Fechas de GMAT y TOEFL son tentativas — ajústalas al agendar. Deadlines: IE rolling (objetivo 15 dic) · IESE R2 7 ene · ESADE R2 mediados de enero.
+</footer>
+
+<script>
+const MESES=["ene","feb","mar","abr","may","jun","jul","ago","sept","oct","nov","dic"];
+const DIAS=["dom","lun","mar","mié","jue","vie","sáb"];
+
+// ---------- Datos del plan ----------
+// tipo: t = tareas, h = hito, l = libre/deporte
+const PLAN=[
+ // FASE 1
+ {f:"f1",sem:"Semana 1 · 14–20 sept",foco:"Retomar ritmo + logística",dias:[
+  ["2026-09-14",[["Volver del viaje: ordenar apuntes de las 3 escuelas mientras están frescos","30 min"]]],
+  ["2026-09-15",[],"Running en cerro"],
+  ["2026-09-16",[["GMAT: Quant cronometrado — rates, ratios y porcentajes (tu brecha #3)","1,5 h"],["Revisar lista de equipo obligatorio Ultra Paine y anotar qué falta comprar","30 min"]]],
+  ["2026-09-17",[["GMAT: drill de soltar — 20 preguntas CR, máx 2,5 min c/u, responder SIEMPRE aunque no estés seguro","1,5 h"],["Agendar fecha GMAT (objetivo sáb 14 nov) y fecha TOEFL/IELTS (objetivo sáb 3 oct)","20 min"]],"¿Nieve AM? (tentativo)"],
+  ["2026-09-18",[],"Libre"],
+  ["2026-09-19",[["Simulacro parcial GMAT (2 secciones seguidas con tiempo real) — adelantado por Ultra Paine","3,5 h"],["Conseguir equipo obligatorio Ultra Paine (compras del fin de semana)","—"]]],
+  ["2026-09-20",[["Revisión de errores del simulacro","1 h"]],null,true]
+ ]},
+ {f:"f1",sem:"Semana 2 · 21–27 sept",foco:"Jefes + Ultra Paine",dias:[
+  ["2026-09-21",[["GMAT: Quant cronometrado — seguir con rates/ratios/porcentajes","1,5 h"],["Agendar conversación con jefe directo (contarle del MBA y pedir carta)","10 min"]]],
+  ["2026-09-22",[["GMAT: sección verbal COMPLETA con reloj — la meta es terminarla, no la precisión","1,5 h"]]],
+  ["2026-09-23",[["Conversación con jefes: plan MBA + pedir las 2 cartas para diciembre","—"],["Armar bolso: equipo obligatorio Ultra Paine completo","30 min"]]],
+  ["2026-09-24",[],"✈️ Viaje a Torres del Paine"],
+  ["2026-09-25",[],"Paine: acreditación, logística de carrera y descanso"],
+  ["2026-09-26",[["🎯 Ultra Paine — día de carrera","—"]]],
+  ["2026-09-27",[],"Vuelta a Santiago",true]
+ ]},
+ {f:"f1",sem:"Semana 3 · 28 sept–4 oct",foco:"TOEFL/IELTS",dias:[
+  ["2026-09-28",[["GMAT: Quant — temas débiles del simulacro","1,5 h"]]],
+  ["2026-09-29",[["Práctica TOEFL/IELTS: formato speaking + writing","1,5 h"]]],
+  ["2026-09-30",[],"Deporte / libre"],
+  ["2026-10-01",[["GMAT: CR cronometrado","1 h"],["Práctica TOEFL: listening con reloj","45 min"]]],
+  ["2026-10-02",[["Repaso liviano TOEFL","45 min"]]],
+  ["2026-10-03",[["🎯 TOEFL/IELTS — examen (tentativo)","—"]]],
+  ["2026-10-04",[],"Descanso ganado",true]
+ ]},
+ {f:"f1",sem:"Semana 4 · 5–11 oct",foco:"Volver full GMAT",dias:[
+  ["2026-10-05",[["GMAT: Quant cronometrado","1,5 h"]]],
+  ["2026-10-06",[["GMAT: Verbal mixto cronometrado","1,5 h"]]],
+  ["2026-10-07",[],"Deporte / libre"],
+  ["2026-10-08",[["GMAT: Data Insights cronometrado","1,5 h"]]],
+  ["2026-10-09",[],"Libre"],
+  ["2026-10-10",[["MOCK OFICIAL 2 — completo, condiciones reales, misma hora que tu examen","3,5 h"]]],
+  ["2026-10-11",[["Análisis del mock: lista de 3 debilidades para las próximas 2 semanas","1,5 h"]],null,true]
+ ]},
+ // FASE 2
+ {f:"f2",sem:"Semana 5 · 12–18 oct",foco:"Atacar debilidades del mock",dias:[
+  ["2026-10-12",[["GMAT: debilidad #1 del mock, cronometrado","1,5 h"]]],
+  ["2026-10-13",[["GMAT: debilidad #2, cronometrado","1,5 h"]]],
+  ["2026-10-14",[],"Deporte / libre"],
+  ["2026-10-15",[["GMAT: debilidad #3 + set mixto","1,5 h"]]],
+  ["2026-10-16",[],"Libre"],
+  ["2026-10-17",[["Bloque largo: sets cronometrados por sección","3 h"]]],
+  ["2026-10-18",[["Repaso de errores","1 h"]],null,true]
+ ]},
+ {f:"f2",sem:"Semana 6 · 19–25 oct",foco:"Ritmo + primer borrador de historia",dias:[
+  ["2026-10-19",[["GMAT: Quant cronometrado","1,5 h"]]],
+  ["2026-10-20",[["GMAT: Verbal cronometrado","1,5 h"]]],
+  ["2026-10-21",[],"Deporte / libre"],
+  ["2026-10-22",[["GMAT: Data Insights","1 h"],["Escribir 1 página: tu historia tech/AI + operaciones (borrador feo, solo ideas)","30 min"]]],
+  ["2026-10-23",[],"Libre"],
+  ["2026-10-24",[["MOCK OFICIAL 3 — completo, condiciones reales","3,5 h"]]],
+  ["2026-10-25",[["Análisis del mock + decisión: ¿el 14 nov sigue siendo la fecha correcta?","1,5 h"]],null,true]
+ ]},
+ {f:"f2",sem:"Semana 7 · 26 oct–1 nov",foco:"Precisión bajo presión",dias:[
+  ["2026-10-26",[["GMAT: debilidades del mock 3","1,5 h"]]],
+  ["2026-10-27",[["GMAT: sets cronometrados con 10% menos tiempo (entrenar margen)","1,5 h"]]],
+  ["2026-10-28",[],"Deporte / libre"],
+  ["2026-10-29",[["GMAT: sección más débil","1,5 h"]]],
+  ["2026-10-30",[],"Libre"],
+  ["2026-10-31",[["Bloque largo: 2 secciones seguidas + revisión","3 h"]]],
+  ["2026-11-01",[["Repaso liviano","45 min"]],null,true]
+ ]},
+ {f:"f2",sem:"Semana 8 · 2–8 nov",foco:"Último mock",dias:[
+  ["2026-11-02",[["GMAT: repaso de fórmulas y patrones frecuentes","1,5 h"]]],
+  ["2026-11-03",[["GMAT: Verbal cronometrado","1,5 h"]]],
+  ["2026-11-04",[],"Deporte / libre"],
+  ["2026-11-05",[["GMAT: set mixto corto, sin agotarse","1 h"]]],
+  ["2026-11-06",[],"Libre"],
+  ["2026-11-07",[["MOCK OFICIAL 4 — el último antes del examen","3,5 h"]]],
+  ["2026-11-08",[["Análisis final: qué repasar esta última semana (poco y puntual)","1 h"]],null,true]
+ ]},
+ {f:"f2",sem:"Semana 9 · 9–14 nov",foco:"Taper — llegar descansado",dias:[
+  ["2026-11-09",[["GMAT: sets cortos de mantenimiento","1 h"]]],
+  ["2026-11-10",[["GMAT: repaso de errores clásicos, nada nuevo","1 h"]]],
+  ["2026-11-11",[],"Deporte / libre"],
+  ["2026-11-12",[["Repaso liviano + logística del examen (documentos, ruta, hora)","45 min"]]],
+  ["2026-11-13",[["Nada de estudio. Deporte suave, dormir temprano","—"]]],
+ ]},
+ {f:"f2",tipo:"hito",fecha:"2026-11-14",nombre:"🎯 GMAT — día del examen",desc:"Tentativo. Con 655+ el plan corre como está; con 675+ se reabre conversación LBS y mejora escenario de becas en todas."},
+ // FASE 3
+ {f:"f3",sem:"Semana 10 · 15–21 nov",foco:"Activar recomendadores + ensayos IE",dias:[
+  ["2026-11-15",[],"Descanso post-GMAT. Te lo ganaste."],
+  ["2026-11-16",[["Brief a los 2 recomendadores: contexto, historia tech/AI+ops, deadline 15 dic, logros que quieres que mencionen","1,5 h"]]],
+  ["2026-11-17",[["Ensayos IE: borrador ensayo 1","1,5 h"]]],
+  ["2026-11-18",[],"Deporte / libre"],
+  ["2026-11-19",[["Ensayos IE: borrador ensayo 2","1,5 h"]]],
+  ["2026-11-20",[],"Libre"],
+  ["2026-11-21",[["CV: rewrite completo formato MBA (verbos activos + cuantificar todo)","3 h"]]],
+ ]},
+ {f:"f3",sem:"Semana 11 · 22–28 nov",foco:"Cerrar borradores IE",dias:[
+  ["2026-11-23",[["Ensayos IE: segunda pasada con feedback","1,5 h"]]],
+  ["2026-11-24",[["Formulario de aplicación IE: llenar datos, transcripts, subir documentos","1,5 h"]]],
+  ["2026-11-25",[],"Deporte / libre"],
+  ["2026-11-26",[["Preparar y grabar video essay IE (practicar 2–3 tomas antes)","1,5 h"]]],
+  ["2026-11-27",[],"Libre"],
+  ["2026-11-28",[["Ensayos IESE: borrador 1 (adaptar historia, no partir de cero)","2,5 h"]]],
+  ["2026-11-29",[["Ping suave a recomendadores: ¿cómo van?","10 min"]],null,true]
+ ]},
+ {f:"f3",sem:"Semana 12 · 30 nov–6 dic",foco:"IESE toma el centro",dias:[
+  ["2026-11-30",[["Ensayos IESE: borrador 2","1,5 h"]]],
+  ["2026-12-01",[["Ensayos ESADE: borrador 1","1,5 h"]]],
+  ["2026-12-02",[],"Deporte / libre"],
+  ["2026-12-03",[["Revisión final aplicación IE completa","1,5 h"]]],
+  ["2026-12-04",[],"Libre"],
+  ["2026-12-05",[["Feedback externo: mandar ensayos a tu amigo de IESE y contacto de IE","1 h"]]],
+ ]},
+ {f:"f3",sem:"Semana 13 · 7–13 dic",foco:"Cerrar IE",dias:[
+  ["2026-12-07",[["Incorporar feedback a ensayos IE","1,5 h"]]],
+  ["2026-12-08",[["Checklist final IE: cada documento, cada campo","1 h"]]],
+  ["2026-12-09",[],"Deporte / libre"],
+  ["2026-12-10",[["Confirmar que las cartas fueron enviadas por los recomendadores","15 min"]]],
+  ["2026-12-11",[],"Libre"],
+  ["2026-12-12",[["Ensayos IESE: versión casi final","2 h"]]],
+ ]},
+ {f:"f3",tipo:"hito",fecha:"2026-12-15",nombre:"📤 Enviar aplicación IE",desc:"Rolling admissions: antes = mejor posición para beca. Con esto asegurada la opción financiera base."},
+ {f:"f3",sem:"Semana 14 · 16–20 dic",foco:"IESE y ESADE a versión final",dias:[
+  ["2026-12-16",[["Ensayos IESE: incorporar feedback, versión final","1,5 h"]]],
+  ["2026-12-17",[["Ensayos ESADE: borrador 2","1,5 h"]]],
+  ["2026-12-18",[],"Deporte / libre"],
+  ["2026-12-19",[["Video essay IESE: practicar preguntas típicas y grabar","1,5 h"]]],
+  ["2026-12-20",[["Formularios IESE y ESADE: llenar todo lo administrativo","2 h"]],null,true]
+ ]},
+ // FASE 4
+ {f:"f4",sem:"Semana 15 · 21–27 dic",foco:"Fiestas — carga mínima",dias:[
+  ["2026-12-22",[["Lectura en frío de ensayos IESE (después de 2 días sin verlos)","1 h"]]],
+  ["2026-12-26",[["Checklist IESE completo: documentos, cartas, scores reportados","1 h"]]],
+ ]},
+ {f:"f4",sem:"Semana 16 · 28 dic–3 ene",foco:"Últimos ajustes",dias:[
+  ["2026-12-28",[["Ensayos ESADE: versión final","1,5 h"]]],
+  ["2026-12-30",[["Revisión final IESE con ojos frescos","1,5 h"]]],
+  ["2027-01-02",[["Checklist final ESADE","1 h"]]],
+ ]},
+ {f:"f4",tipo:"hito",fecha:"2027-01-05",nombre:"📤 Enviar aplicación IESE",desc:"Dos días antes del deadline para no depender de la plataforma el último día."},
+ {f:"f4",tipo:"hito",fecha:"2027-01-07",nombre:"⏰ Deadline R2 IESE",desc:"7 de enero 2027. ESADE R2 se envía en los días siguientes (deadline mediados de enero)."},
+];
+
+// ---------- Entregables ----------
+const ENTS={
+  gmat:{n:"GMAT"},toefl:{n:"TOEFL/IELTS"},cartas:{n:"Cartas de recomendación"},
+  cv:{n:"CV"},ie:{n:"Aplicación IE"},iese:{n:"Aplicación IESE"},esade:{n:"Aplicación ESADE"}
+};
+function entDe(txt){
+  if(/IESE/.test(txt))return"iese";
+  if(/ESADE/.test(txt))return"esade";
+  if(/\bIE\b/.test(txt))return"ie";
+  const t=txt.toLowerCase();
+  if(t.includes("toefl")||t.includes("ielts"))return"toefl";
+  if(t.includes("carta")||t.includes("recomendador")||t.includes("jefe"))return"cartas";
+  if(t.includes("cv"))return"cv";
+  if(t.includes("gmat")||t.includes("mock"))return"gmat";
+  return"otros";
+}
+
+// ---------- Render ----------
+function fmtFecha(iso){
+  const d=new Date(iso+"T12:00:00");
+  return {dia:DIAS[d.getDay()],num:d.getDate()+" "+MESES[d.getMonth()]};
+}
+function esHoy(iso){
+  const h=new Date(); const d=new Date(iso+"T12:00:00");
+  return h.getFullYear()===d.getFullYear()&&h.getMonth()===d.getMonth()&&h.getDate()===d.getDate();
+}
+function esPasado(iso){
+  const h=new Date(); h.setHours(0,0,0,0);
+  return new Date(iso+"T12:00:00")<h && !esHoy(iso);
+}
+let store={};
+try{store=JSON.parse(localStorage.getItem("planMBA")||"{}")}catch(e){store={}}
+function guardar(){try{localStorage.setItem("planMBA",JSON.stringify(store))}catch(e){}}
+
+PLAN.forEach((bloque,bi)=>{
+  const cont=document.getElementById("semanas-"+bloque.f);
+  if(bloque.tipo==="hito"){
+    const f=fmtFecha(bloque.fecha);
+    const div=document.createElement("div");
+    div.className="hito";
+    div.dataset.ent=entDe(bloque.nombre+" "+bloque.desc);
+    if(esHoy(bloque.fecha))div.classList.add("hoy");
+    div.dataset.fecha=bloque.fecha;
+    div.innerHTML=`<div class="fecha">${f.dia}<small>${f.num}</small></div>
+      <div><div class="hito-nombre">${bloque.nombre}</div><p>${bloque.desc}</p></div>`;
+    cont.appendChild(div);
+    return;
+  }
+  const sem=document.createElement("div");
+  sem.className="semana";
+  sem.innerHTML=`<div class="semana-titulo"><span>${bloque.sem}</span><span class="foco">${bloque.foco}</span></div>`;
+  bloque.dias.forEach((dia,di)=>{
+    const [iso,tareas,libre]=dia;
+    const f=fmtFecha(iso);
+    const div=document.createElement("div");
+    div.className="dia";
+    div.dataset.fecha=iso;
+    if(esHoy(iso))div.classList.add("hoy");
+    else if(esPasado(iso))div.classList.add("pasado");
+    let html=`<div class="fecha">${f.dia}<small>${f.num}</small></div><div class="tareas">`;
+    if(tareas.length===0){
+      html+=`<span class="libre">${libre||"Libre"}</span>`;
+    }else{
+      tareas.forEach((t,ti)=>{
+        const key=`${iso}-${ti}`;
+        const checked=store[key]?"checked":"";
+        const cls=store[key]?"tarea marcada":"tarea";
+        const ent=entDe(t[0]);
+        html+=`<label class="${cls}" data-ent="${ent}"><input type="checkbox" data-key="${key}" ${checked}><span>${t[0]}${t[1]&&t[1]!=="—"?` <span class="dur">· ${t[1]}</span>`:""}</span></label>`;
+      });
+      if(libre)html+=`<span class="libre">${libre}</span>`;
+    }
+    html+=`</div>`;
+    div.innerHTML=html;
+    sem.appendChild(div);
+  });
+  cont.appendChild(sem);
+});
+
+document.addEventListener("change",e=>{
+  if(e.target.matches("input[type=checkbox]")){
+    const key=e.target.dataset.key;
+    store[key]=e.target.checked;
+    if(!e.target.checked)delete store[key];
+    e.target.closest(".tarea").classList.toggle("marcada",e.target.checked);
+    guardar();
+  }
+});
+
+// Countdowns + barra
+function dias(hasta){
+  const h=new Date();h.setHours(0,0,0,0);
+  return Math.max(0,Math.round((new Date(hasta+"T12:00:00")-h)/864e5));
+}
+document.getElementById("cd-paine").textContent=dias("2026-09-26");
+document.getElementById("cd-gmat").textContent=dias("2026-11-14");
+document.getElementById("cd-iese").textContent=dias("2027-01-07");
+const inicio=new Date("2026-09-14T12:00:00"),fin=new Date("2027-01-07T12:00:00");
+const pct=Math.min(100,Math.max(0,(new Date()-inicio)/(fin-inicio)*100));
+document.getElementById("barra").style.width=pct+"%";
+
+// ---------- Vista calendario ----------
+const catPorFecha={};
+function clasificar(texto){
+  const t=texto.toLowerCase();
+  if(t.includes("mock")||t.includes("simulacro"))return"c-mock";
+  if(t.includes("ensayo")||t.includes("aplicaci")||t.includes("cv")||t.includes("recomendador")||t.includes("video essay")||t.includes("formulario")||t.includes("checklist")||t.includes("feedback")||t.includes("cartas"))return"c-app";
+  return"c-gmat";
+}
+const prioridad={"c-hito":4,"c-mock":3,"c-app":2,"c-gmat":1,"c-libre":0};
+PLAN.forEach(b=>{
+  if(b.tipo==="hito"){catPorFecha[b.fecha]="c-hito";return}
+  b.dias.forEach(d=>{
+    const [iso,tareas,libre]=d;
+    let cat;
+    if(tareas.length===0)cat="c-libre";
+    else{
+      cat="c-gmat";
+      tareas.forEach(t=>{
+        if(t[0].includes("🎯")){cat="c-hito";return}
+        const c=clasificar(t[0]);
+        if(prioridad[c]>prioridad[cat])cat=c;
+      });
+    }
+    if(!catPorFecha[iso]||prioridad[cat]>prioridad[catPorFecha[iso]])catPorFecha[iso]=cat;
+  });
+});
+const MESES_L=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const mesesPlan=[[2026,8],[2026,9],[2026,10],[2026,11],[2027,0]];
+const calGrid=document.getElementById("cal-grid");
+mesesPlan.forEach(([anio,mes])=>{
+  const mesDiv=document.createElement("div");
+  mesDiv.className="cal-mes";
+  let html=`<h3>${MESES_L[mes]} ${anio}</h3><div class="cal-tabla">`;
+  ["L","M","M","J","V","S","D"].forEach(d=>html+=`<div class="cal-dow">${d}</div>`);
+  const primero=new Date(anio,mes,1);
+  let offset=(primero.getDay()+6)%7; // lunes=0
+  for(let i=0;i<offset;i++)html+=`<div class="cal-dia vacio"></div>`;
+  const ultimoDia=new Date(anio,mes+1,0).getDate();
+  for(let d=1;d<=ultimoDia;d++){
+    const iso=`${anio}-${String(mes+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const cat=catPorFecha[iso];
+    const hoyCls=esHoy(iso)?" hoy-cal":"";
+    if(cat){
+      html+=`<button class="cal-dia activo ${cat}${hoyCls}" data-ir="${iso}" aria-label="Ver detalle del ${d} de ${MESES_L[mes]}">${d}</button>`;
+    }else{
+      html+=`<div class="cal-dia${hoyCls}">${d}</div>`;
+    }
+  }
+  html+=`</div>`;
+  mesDiv.innerHTML=html;
+  calGrid.appendChild(mesDiv);
+});
+calGrid.addEventListener("click",e=>{
+  const btn=e.target.closest("[data-ir]");
+  if(!btn)return;
+  const el=document.querySelector(`[data-fecha="${btn.dataset.ir}"]`);
+  if(el){
+    el.scrollIntoView({behavior:"smooth",block:"center"});
+    el.style.outline="3px solid var(--accent)";
+    setTimeout(()=>{el.style.outline=""},1600);
+  }
+});
+
+// ---------- Filtros por entregable ----------
+const inicioEnt={};
+PLAN.forEach(b=>{
+  if(b.tipo==="hito"){
+    const e=entDe(b.nombre+" "+b.desc);
+    if(!inicioEnt[e]||b.fecha<inicioEnt[e])inicioEnt[e]=b.fecha;
+    return;
+  }
+  b.dias.forEach(d=>{
+    const [iso,tareas]=d;
+    tareas.forEach(t=>{
+      const e=entDe(t[0]);
+      if(!inicioEnt[e]||iso<inicioEnt[e])inicioEnt[e]=iso;
+    });
+  });
+});
+const filtros=document.getElementById("filtros");
+let filtroActivo=null;
+const chipTodo=document.createElement("button");
+chipTodo.className="chip on";chipTodo.innerHTML=`Todo el plan`;
+filtros.appendChild(chipTodo);
+Object.keys(ENTS).forEach(e=>{
+  if(!inicioEnt[e])return;
+  const f=fmtFecha(inicioEnt[e]);
+  const b=document.createElement("button");
+  b.className="chip";b.dataset.ent=e;
+  b.innerHTML=`${ENTS[e].n}<small>parte el ${f.num}</small>`;
+  filtros.appendChild(b);
+});
+function aplicarFiltro(ent){
+  filtroActivo=ent;
+  document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",(c.dataset.ent||null)===ent));
+  document.body.classList.toggle("filtrando",!!ent);
+  document.querySelectorAll(".dia").forEach(d=>{
+    const match=!!ent&&[...d.querySelectorAll(".tarea")].some(t=>t.dataset.ent===ent);
+    d.classList.toggle("match",match);
+    d.querySelectorAll(".tarea").forEach(t=>t.classList.toggle("t-match",t.dataset.ent===ent));
+  });
+  document.querySelectorAll(".hito").forEach(h=>h.classList.toggle("match",!!ent&&h.dataset.ent===ent));
+  document.querySelectorAll(".semana").forEach(s=>s.classList.toggle("tiene-match",!!s.querySelector(".dia.match")));
+  document.querySelectorAll(".fase").forEach(fs=>{
+    if(fs.id==="vista-cal"){fs.classList.add("tiene-match");return}
+    fs.classList.toggle("tiene-match",!!fs.querySelector(".dia.match,.hito.match"));
+  });
+  // atenuar cuadraditos del calendario que no aplican
+  document.querySelectorAll(".cal-dia.activo").forEach(c=>{
+    if(!ent){c.style.opacity="";return}
+    const el=document.querySelector(`[data-fecha="${c.dataset.ir}"]`);
+    const tiene=el&&(el.classList.contains("match")||(el.classList.contains("hito")&&el.dataset.ent===ent));
+    c.style.opacity=tiene?"":".22";
+  });
+}
+filtros.addEventListener("click",e=>{
+  const chip=e.target.closest(".chip");
+  if(!chip)return;
+  const ent=chip.dataset.ent||null;
+  aplicarFiltro(ent===filtroActivo?null:ent);
+});
+
+function irAHoy(){
+  const el=document.querySelector(".hoy");
+  if(el)el.scrollIntoView({behavior:"smooth",block:"center"});
+  else window.scrollTo({top:0,behavior:"smooth"});
+}
+window.addEventListener("load",()=>{setTimeout(irAHoy,300)});
+</script>
+</body>
+</html>
